@@ -6,31 +6,63 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
 <GridPane fx:controller="sample.Controller"
-          xmlns:fx="http://javafx.com/fxml" alignment="top_center" hgap="10" vgap="10" gridLinesVisible="true">
+          xmlns:fx="http://javafx.com/fxml" alignment="top_center" hgap="10" vgap="10">
     <padding>
         <Insets top="10"/>
     </padding>
-    <Button text="Add Url" GridPane.rowIndex="0" GridPane.columnIndex="0">
-        <graphic>
-            <ImageView>
-                <Image url="@/toolbarButtonGraphics/general/Add24.gif"/>
-            </ImageView>
-        </graphic>
-    </Button>
-    <Button text="Delete Urls" GridPane.rowIndex="1" GridPane.columnIndex="0">
-        <graphic>
-            <ImageView>
-                <Image url="@/toolbarButtonGraphics/general/Delete24.gif"/>
-            </ImageView>
-        </graphic>
-    </Button>
-    <Button text="Show All" GridPane.rowIndex="2" GridPane.columnIndex="0">
+
+    <TextField GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+    <Button text="Search" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.halignment="CENTER"/>
+
+    <VBox GridPane.rowIndex="1" GridPane.columnIndex="0">
+        <padding>
+            <Insets top="10"/>
+            <Insets left="10"/>
+        </padding>
+        <Button text="Add " prefWidth="200">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/general/Add24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button text="Delete" prefWidth="200">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/general/Delete24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+    </VBox>
+
+    <TextArea GridPane.rowIndex="1" GridPane.ColumnIndex="1"/>
+
+    <VBox GridPane.rowIndex="2" GridPane.columnIndex="0">
+        <padding>
+            <Insets top="10"/>
+            <Insets left="10"/>
+        </padding>
+
+        <Button text="Show All" prefWidth="200">
         <graphic>
             <ImageView>
                 <Image url="@/toolbarButtonGraphics/general/History24.gif"/>
             </ImageView>
         </graphic>
     </Button>
+        <Button text="Check" prefWidth="200">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/general/TipOfTheDay24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+    </VBox>
+
+    <TextArea GridPane.rowIndex="2" GridPane.ColumnIndex="1"/>
 
 </GridPane>
