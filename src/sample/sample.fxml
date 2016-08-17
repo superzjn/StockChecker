@@ -3,6 +3,34 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
 <GridPane fx:controller="sample.Controller"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+          xmlns:fx="http://javafx.com/fxml" alignment="top_center" hgap="10" vgap="10" gridLinesVisible="true">
+    <padding>
+        <Insets top="10"/>
+    </padding>
+    <Button text="Add Url" GridPane.rowIndex="0" GridPane.columnIndex="0">
+        <graphic>
+            <ImageView>
+                <Image url="@/toolbarButtonGraphics/general/Add24.gif"/>
+            </ImageView>
+        </graphic>
+    </Button>
+    <Button text="Delete Urls" GridPane.rowIndex="1" GridPane.columnIndex="0">
+        <graphic>
+            <ImageView>
+                <Image url="@/toolbarButtonGraphics/general/Delete24.gif"/>
+            </ImageView>
+        </graphic>
+    </Button>
+    <Button text="Show All" GridPane.rowIndex="2" GridPane.columnIndex="0">
+        <graphic>
+            <ImageView>
+                <Image url="@/toolbarButtonGraphics/general/History24.gif"/>
+            </ImageView>
+        </graphic>
+    </Button>
+
 </GridPane>
