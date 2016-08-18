@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+
+<GridPane alignment="top_center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8.0.76-ea"
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="StockChecker.Controller">
+    <padding>
+        <Insets top="10"/>
+    </padding>
+
+    <TextField GridPane.columnIndex="1" GridPane.rowIndex="0">
+        <GridPane.margin>
+            <Insets right="10.0"/>
+        </GridPane.margin>
+    </TextField>
+    <Button text="Search" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0"/>
+
+
+    <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+        <padding>
+            <Insets top="10"/>
+            <Insets left="10"/>
+        </padding>
+
+        <!--Add Button-->
+        <Button fx:id="addButton" prefWidth="200" text="Add " onAction="#addUrl">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/general/Add24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+
+        <!--Delete Button-->
+        <Button fx:id="deleteButton" prefWidth="200" text="Delete" onAction="#delUrl">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/general/Delete24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+    </VBox>
+
+    <!--Urls to be Added/Delete-->
+    <TextArea fx:id="inputUrls" GridPane.ColumnIndex="1" GridPane.rowIndex="1">
+        <padding>
+            <Insets right="10"/>
+        </padding>
+    </TextArea>
+
+    <VBox GridPane.columnIndex="0" GridPane.rowIndex="2">
+        <padding>
+            <Insets top="10"/>
+            <Insets left="10"/>
+        </padding>
+
+        <!--ShowAll Button-->
+        <Button fx:id="showButton" prefWidth="200" text="Show All" onAction="#showAll">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/general/History24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+
+        <!--Check Button-->
+        <Button fx:id="checkButton" prefWidth="200" text="Check" onAction="#checkStock">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/general/TipOfTheDay24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+    </VBox>
+
+    <!--Result Box-->
+    <TextArea fx:id="outputUrls" GridPane.ColumnIndex="1" GridPane.rowIndex="2">
+        <padding>
+            <Insets right="10"/>
+        </padding>
+    </TextArea>
+
+    <!--Progress Bar-->
+    <ProgressBar fx:id="progressBar" prefWidth="350" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+    <!--Message -->
+
+    <Label fx:id="msgBox" text="Message" GridPane.rowIndex="4"/>
+
+</GridPane>
