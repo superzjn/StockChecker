@@ -40,7 +40,11 @@
         </Button>
     </VBox>
 
-    <TextArea GridPane.rowIndex="1" GridPane.ColumnIndex="1"/>
+    <TextArea GridPane.rowIndex="1" GridPane.ColumnIndex="1">
+        <padding>
+            <Insets right="10"/>
+        </padding>
+    </TextArea>
 
     <VBox GridPane.rowIndex="2" GridPane.columnIndex="0">
         <padding>
@@ -64,7 +68,11 @@
         </Button>
     </VBox>
 
-    <TextArea GridPane.rowIndex="2" GridPane.ColumnIndex="1"/>
+    <TextArea GridPane.rowIndex="2" GridPane.ColumnIndex="1">
+        <padding>
+            <Insets right="10"/>
+        </padding>
+    </TextArea>
 
     <ProgressBar GridPane.rowIndex="3" GridPane.columnIndex="1" prefWidth="350"/>
 </GridPane>
