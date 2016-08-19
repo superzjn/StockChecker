@@ -17,12 +17,16 @@
         <Insets top="10"/>
     </padding>
 
-    <TextField GridPane.columnIndex="1" GridPane.rowIndex="0">
+    <!--Search Button-->
+    <Button text="Search" fx:id="searchButton" GridPane.columnIndex="0" GridPane.halignment="CENTER"
+            GridPane.rowIndex="0" onAction="#searchUrl"/>
+
+    <!--Search Box-->
+    <TextField fx:id="searchBox" GridPane.columnIndex="1" GridPane.rowIndex="0">
         <GridPane.margin>
             <Insets right="10.0"/>
         </GridPane.margin>
     </TextField>
-    <Button text="Search" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0"/>
 
 
     <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
@@ -83,7 +87,7 @@
     </VBox>
 
     <!--Result Box-->
-    <TextArea fx:id="outputUrls" GridPane.ColumnIndex="1" GridPane.rowIndex="2">
+    <TextArea fx:id="outputUrls" GridPane.ColumnIndex="1" GridPane.rowIndex="2" editable="false">
         <padding>
             <Insets right="10"/>
         </padding>
@@ -94,6 +98,6 @@
 
     <!--Message -->
 
-    <Label fx:id="msgBox" text="Message" GridPane.rowIndex="4"/>
+    <Label fx:id="msgBox" text="Message" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
 
 </GridPane>
