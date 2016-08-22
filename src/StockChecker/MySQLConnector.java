@@ -59,19 +59,22 @@ public class MySQLConnector {
     }
 
     //Add or Delete
-    public boolean update(String sql) {
-        boolean flag = false;
+    public int update(String sql) {
+        int flag = 0;
 
         try {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
-            flag = true;
+            flag = 1;
         } catch (Exception e) {
             System.out.println("Update Execution Failed");
             e.printStackTrace();
+            if (e.toString().contains("Duplicate")) {
+                System.out.println("Duplicate Records");
+                flag = 2;
+            }
         }
         return flag;
-
     }
 }
 

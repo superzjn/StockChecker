@@ -53,29 +53,53 @@ public class Controller {
     public void addUrl() {
 
         sqlConnector = new MySQLConnector();
-        int count = 1;
+        int count = 0;
 
         String input = inputUrls.getText();
         String[] urls = input.split("[\\r\\n]+");     // make it works for Windows, UNIX and Mac, and ignore empty lines
+        count = urls.length;
 
         for (String str : urls) {
-            try {
-                str = str.trim();    //Remove spaces
-                sql = "INSERT INTO watchlist VALUES('" + str + "',now());";
-                if (sqlConnector.update(sql)) {
-                    msgBox.setText(count + " urls are added.");
-                    count++;
-                }
-            } catch (Exception e) {
-                msgBox.setText("Update Failed.");
-                e.printStackTrace();
-            } finally {
-                sqlConnector.close();
+
+            str = str.trim();    //Remove spaces
+            sql = "INSERT INTO watchlist VALUES('" + str + "',now());";
+
+            if (sqlConnector.update(sql) == 1) {
+                msgBox.setText(count + " urls are added.");
+            } else if (sqlConnector.update(sql) == 2) {
+                msgBox.setText(count + " This url is already exist. " + str);
+            } else {
+                msgBox.setText("Update failed");
             }
         }
+        sqlConnector.close();
     }
 
     public void delUrl() {
+
+        sqlConnector = new MySQLConnector();
+        int count = 0;
+
+        String input = inputUrls.getText();
+        if (input != "") {
+            String[] urls = input.split("[\\r\\n]+");     // make it works for Windows, UNIX and Mac, and ignore empty lines
+            count = urls.length;
+
+            for (String str : urls) {
+
+                str = str.trim();    //Remove spaces
+                sql = "DELETE FROM watchlist WHERE Urls = '" + str + "';";
+
+                if (sqlConnector.update(sql) == 1) {
+                    msgBox.setText(count + " urls are deleted.");
+                } else {
+                    msgBox.setText("Update failed");
+                }
+            }
+            sqlConnector.close();
+        } else {
+            msgBox.setText("Please input");
+        }
 
     }
 
