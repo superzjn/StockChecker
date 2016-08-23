@@ -27,7 +27,7 @@ public class Controller {
         outputUrls.clear();
         sqlConnector = new MySQLConnector();
         sql = "SELECT * FROM watchlist";
-        ResultSet resultSet = null;
+        ResultSet resultSet;
         int count = 0;
 
         try {
@@ -36,7 +36,6 @@ public class Controller {
             while (resultSet.next()) {
                 outputUrls.appendText(resultSet.getString(1) + "\n");
             }
-
             // Get count
             resultSet.last();
             count = resultSet.getRow();
@@ -53,35 +52,40 @@ public class Controller {
     public void addUrl() {
 
         sqlConnector = new MySQLConnector();
-        int count = 0;
+        int count;
 
         String input = inputUrls.getText();
-        String[] urls = input.split("[\\r\\n]+");     // make it works for Windows, UNIX and Mac, and ignore empty lines
-        count = urls.length;
 
-        for (String str : urls) {
+        if (!input.isEmpty()) {
+            String[] urls = input.split("[\\r\\n]+");     // make it works for Windows, UNIX and Mac, and ignore empty lines
+            count = urls.length;
 
-            str = str.trim();    //Remove spaces
-            sql = "INSERT INTO watchlist VALUES('" + str + "',now());";
+            for (String str : urls) {
 
-            if (sqlConnector.update(sql) == 1) {
-                msgBox.setText(count + " urls are added.");
-            } else if (sqlConnector.update(sql) == 2) {
-                msgBox.setText(count + " This url is already exist. " + str);
-            } else {
-                msgBox.setText("Update failed");
+                str = str.trim();    //Remove spaces
+                sql = "INSERT INTO watchlist VALUES('" + str + "',now());";
+
+                if (sqlConnector.update(sql) == 1) {
+                    msgBox.setText(count + " urls are added.");
+                } else if (sqlConnector.update(sql) == 2) {
+                    msgBox.setText(count + " This url is already exist. " + str);
+                } else {
+                    msgBox.setText("Update failed");
+                }
             }
+            sqlConnector.close();
+        } else {
+            msgBox.setText("Please Input");
         }
-        sqlConnector.close();
     }
 
     public void delUrl() {
 
         sqlConnector = new MySQLConnector();
-        int count = 0;
+        int count;
 
         String input = inputUrls.getText();
-        if (input != "") {
+        if (!input.isEmpty()) {
             String[] urls = input.split("[\\r\\n]+");     // make it works for Windows, UNIX and Mac, and ignore empty lines
             count = urls.length;
 
@@ -98,9 +102,8 @@ public class Controller {
             }
             sqlConnector.close();
         } else {
-            msgBox.setText("Please input");
+            msgBox.setText("Please Input");
         }
-
     }
 
     public void checkStock() {
@@ -108,6 +111,36 @@ public class Controller {
     }
 
     public void searchUrl() {
+
+        sqlConnector = new MySQLConnector();
+        String input = searchBox.getText();
+        ResultSet resultSet;
+
+        if (!input.isEmpty()) {
+            input = input.trim();
+
+            outputUrls.clear();
+            sql = "SELECT * FROM watchlist WHERE Urls ='" + input + "'";
+            resultSet = sqlConnector.query(sql);
+
+            try {
+                if (resultSet.next()) {
+                    outputUrls.setText("It's there");
+                } else {
+                    outputUrls.setText("Not Exist");
+                }
+                resultSet.close();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                sqlConnector.close();
+            }
+
+        } else {
+            msgBox.setText("Please Input");
+        }
+
 
     }
 
