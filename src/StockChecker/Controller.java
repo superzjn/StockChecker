@@ -4,7 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -107,7 +113,32 @@ public class Controller {
     }
 
     public void checkStock() {
+        // public void checkStock() throws IOException {
+        Connection httpConn = Jsoup.connect("http://www.redsgear.com/z-hunter-assisted-opening-knife-4-5in-closed-zb-003gn.html2");
+        Redsgear red = new Redsgear("http://www.redsgear.com/z-hunter-assisted-opening-knife-4-5in-closed-zb-003gnxx.html");
+        int code2 = red.getStatusCode();
 
+        if (!red.pagenotFound()) {
+            System.out.println("Good");
+        }
+
+        int test = 999;
+        try {
+            test = httpConn.execute().statusCode();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Test " + test);
+
+
+        //Document doc = httpConn.get();
+
+        //Elements content = doc.getElementsByClass("availability-only");
+
+        //System.out.println(doc.title());
+        //System.out.println(content.text());
     }
 
     public void searchUrl() {
