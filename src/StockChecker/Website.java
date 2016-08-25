@@ -3,6 +3,8 @@ package StockChecker;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
+import java.io.IOException;
+
 /**
  * Created by jzhang9 on 8/24/2016.
  */
@@ -49,8 +51,8 @@ public abstract class Website {
     public int getStatusCode() {
 
         try {
-            this.statusCode = httpConn.execute().statusCode();
-        } catch (Exception e) {
+            this.statusCode = httpConn.ignoreHttpErrors(true).execute().statusCode();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

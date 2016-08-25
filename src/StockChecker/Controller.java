@@ -122,15 +122,14 @@ public class Controller {
             System.out.println("Good");
         }
 
-        int test = 999;
-        try {
-            test = httpConn.execute().statusCode();
+//        try {
+//            Connection.Response response = httpConn.ignoreHttpErrors(true).execute();
+//            test = response.statusCode();
+//    } catch (IOException e) {
+//        System.out.println(e);
+//    }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Test " + test);
+//        System.out.println("Test " + test);
 
 
         //Document doc = httpConn.get();
