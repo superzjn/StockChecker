@@ -2,6 +2,7 @@ package StockChecker;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 
@@ -14,6 +15,8 @@ public abstract class Website {
     private String oosMessage;
     private int statusCode;
     private Connection httpConn;
+    protected Document doc;
+
 
     public Website(String url) {
         this.url = url;
@@ -29,6 +32,22 @@ public abstract class Website {
             return true;
         }
         return false;
+    }
+
+    public Document getDoc() {
+
+        try {
+            doc = this.httpConn.get();
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return doc;
+    }
+
+    public void setDoc(Document doc) {
+        this.doc = doc;
     }
 
     public Connection getHttpConn() {

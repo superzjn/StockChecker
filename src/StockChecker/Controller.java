@@ -113,32 +113,20 @@ public class Controller {
     }
 
     public void checkStock() {
-        // public void checkStock() throws IOException {
-        Connection httpConn = Jsoup.connect("http://www.redsgear.com/z-hunter-assisted-opening-knife-4-5in-closed-zb-003gn.html2");
-        Redsgear red = new Redsgear("http://www.redsgear.com/z-hunter-assisted-opening-knife-4-5in-closed-zb-003gn.html");
+
+//        Redsgear red = new Redsgear("http://www.redsgear.com/z-hunter-assisted-opening-knife-4-5in-closed-zb-003gn.html");
+        Redsgear red = new Redsgear("http://www.redsgear.com/30-06-10-ring-paper-target-100-count-tar10-100.html");
 
         if (!red.pagenotFound()) {
             System.out.println("Good");
         } else {
             System.out.println("404");
         }
-
-//        try {
-//            Connection.Response response = httpConn.ignoreHttpErrors(true).execute();
-//            test = response.statusCode();
-//    } catch (IOException e) {
-//        System.out.println(e);
-//    }
-
-//        System.out.println("Test " + test);
-
-
-        //Document doc = httpConn.get();
-
-        //Elements content = doc.getElementsByClass("availability-only");
-
-        //System.out.println(doc.title());
-        //System.out.println(content.text());
+        if (red.isoutOfstock()) {
+            System.out.println("Out of stock");
+        } else {
+            System.out.println("In Stock");
+        }
     }
 
     public void searchUrl() {
