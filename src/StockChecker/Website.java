@@ -34,17 +34,19 @@ public abstract class Website {
         return false;
     }
 
+
     public Document getDoc() {
 
         try {
             doc = this.httpConn.get();
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         return doc;
-    }
+        }
+
 
     public void setDoc(Document doc) {
         this.doc = doc;

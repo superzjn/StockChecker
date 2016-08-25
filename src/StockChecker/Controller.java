@@ -2,17 +2,13 @@ package StockChecker;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class Controller {
@@ -24,9 +20,14 @@ public class Controller {
     private Label msgBox;
     @FXML
     private TextField searchBox;
+    @FXML
+    private ProgressBar progressBar;
 
     private MySQLConnector sqlConnector;
     private String sql = null;
+
+    private ArrayList<String> removedProducts = new ArrayList<>();
+    private ArrayList<String> oosProducts = new ArrayList<>();
 
     public void showAll() {
 
@@ -114,20 +115,61 @@ public class Controller {
 
     public void checkStock() {
 
-//        Redsgear red = new Redsgear("http://www.redsgear.com/z-hunter-assisted-opening-knife-4-5in-closed-zb-003gn.html");
-        Redsgear red = new Redsgear("http://www.redsgear.com/30-06-10-ring-paper-target-100-count-tar10-100.html");
+        outputUrls.clear();
+        sqlConnector = new MySQLConnector();
+        sql = "SELECT * FROM watchlist";
+        ResultSet resultSet;
+        Website productPage = null;
+        int progress = 0;
+        int count = 0;
 
-        if (!red.pagenotFound()) {
-            System.out.println("Good");
-        } else {
-            System.out.println("404");
+        try {
+            resultSet = sqlConnector.query(sql);
+//            resultSet.last();
+//            count = resultSet.getRow();
+//            resultSet.first();
+
+            while (resultSet.next()) {
+                String url = resultSet.getString(1);
+                if (url.contains("redsgear")) {
+                    productPage = new Redsgear(url);
+                } else {
+                    System.out.println("Website is not supported");
+                }
+                checkproductPage(productPage);
+//                progress++;
+//                progressBar.setProgress(progress/count);
+            }
+
+            sqlConnector.close();
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        if (red.isoutOfstock()) {
-            System.out.println("Out of stock");
-        } else {
-            System.out.println("In Stock");
+        outputUrls.appendText("Removed:" + "\n");
+        showcheckResults(removedProducts);
+        outputUrls.appendText("Out of Stock" + "\n");
+        showcheckResults(oosProducts);
+    }
+
+
+    private void checkproductPage(Website productPage) {
+        if (productPage.pagenotFound()) {   // If it returns 404
+            removedProducts.add(productPage.getUrl());
+        }
+
+        if (productPage.isoutOfstock()) {   // If it is out of stock
+            oosProducts.add(productPage.getUrl());
         }
     }
+
+    private void showcheckResults(ArrayList<String> list) {
+
+        for (String url : list) {
+            outputUrls.appendText(url + "\n");
+        }
+    }
+
 
     public void searchUrl() {
 

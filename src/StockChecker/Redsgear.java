@@ -16,6 +16,7 @@ public class Redsgear extends Website {
     public boolean isoutOfstock() {
 
         doc = getDoc();
+
         Elements content = doc.getElementsByClass("availability-only");
 
         if (content.size() != 0) {
