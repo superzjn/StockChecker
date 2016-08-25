@@ -15,7 +15,6 @@ public abstract class Website {
     private int statusCode;
     private Connection httpConn;
 
-
     public Website(String url) {
         this.url = url;
         this.httpConn = Jsoup.connect(url);
@@ -25,7 +24,7 @@ public abstract class Website {
     public abstract boolean isoutOfstock();
 
     public boolean pagenotFound() {
-
+        statusCode = this.getStatusCode();
         if (statusCode == 404) {
             return true;
         }

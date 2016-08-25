@@ -115,11 +115,12 @@ public class Controller {
     public void checkStock() {
         // public void checkStock() throws IOException {
         Connection httpConn = Jsoup.connect("http://www.redsgear.com/z-hunter-assisted-opening-knife-4-5in-closed-zb-003gn.html2");
-        Redsgear red = new Redsgear("http://www.redsgear.com/z-hunter-assisted-opening-knife-4-5in-closed-zb-003gnxx.html");
-        int code2 = red.getStatusCode();
+        Redsgear red = new Redsgear("http://www.redsgear.com/z-hunter-assisted-opening-knife-4-5in-closed-zb-003gn.html");
 
         if (!red.pagenotFound()) {
             System.out.println("Good");
+        } else {
+            System.out.println("404");
         }
 
 //        try {
