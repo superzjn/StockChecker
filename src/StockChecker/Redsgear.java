@@ -1,6 +1,7 @@
 package StockChecker;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
@@ -13,13 +14,26 @@ public class Redsgear extends Website {
     }
 
     @Override
-    public boolean isoutOfstock() {
+    public boolean isalmostGone() {
 
         doc = getDoc();
 
-        Elements content = doc.getElementsByClass("availability-only");
+        Elements numberLeft = doc.getElementsByClass("availability-only");
 
-        if (content.size() != 0) {
+        if (numberLeft.size() != 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isoutofStock() {
+        doc = getDoc();
+
+        Element qtyBox = doc.getElementById("qty");
+
+        if (qtyBox == null) {
             return true;
         }
 
