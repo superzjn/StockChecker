@@ -1,10 +1,9 @@
 package StockChecker;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +11,12 @@ import java.util.ArrayList;
 
 
 public class Controller {
+    @FXML
+    private Button searchButton;
+    @FXML
+    private Button addButton;
+    @FXML
+    private Button deleteButton;
     @FXML
     private TextArea inputUrls;
     @FXML
@@ -27,7 +32,16 @@ public class Controller {
     private String sql = null;
 
     private ArrayList<String> removedProducts = new ArrayList<>();
+    private ArrayList<String> lowProducts = new ArrayList<>();
     private ArrayList<String> oosProducts = new ArrayList<>();
+
+    @FXML
+    public void initialize() {
+        addButton.setDisable(true);
+        deleteButton.setDisable(true);
+        searchButton.setDisable(true);
+    }
+
 
     public void showAll() {
 
@@ -116,50 +130,160 @@ public class Controller {
     public void checkStock() {
 
         outputUrls.clear();
+        removedProducts.clear();
+        oosProducts.clear();
+        lowProducts.clear();
+
         sqlConnector = new MySQLConnector();
         sql = "SELECT * FROM watchlist";
-        ResultSet resultSet;
-        Website productPage = null;
-        int progress = 0;
-        int count = 0;
+        //ResultSet resultSet;
 
-        try {
-            resultSet = sqlConnector.query(sql);
-//            resultSet.last();
-//            count = resultSet.getRow();
-//            resultSet.first();
 
-            while (resultSet.next()) {
-                String url = resultSet.getString(1);
-                if (url.contains("redsgear")) {
-                    productPage = new Redsgear(url);
-                } else {
-                    System.out.println("Website is not supported");
+        Task task = new Task<Void>() {    //Backend Thread
+            @Override
+            public Void call() {
+                Website productPage = null;
+                int progress = 0;
+                int count = 0;
+
+                try {
+                    ResultSet resultSet = sqlConnector.query(sql);
+
+                    if (resultSet.last()) {//make cursor to point to the last row in the ResultSet object
+                        count = resultSet.getRow();
+                        resultSet.beforeFirst();
+
+
+                        System.out.println("Count is " + count);
+
+                        while (resultSet.next()) {
+
+                            String url = resultSet.getString(1);
+                            if (url.contains("redsgear")) {
+                                productPage = new Redsgear(url);
+                            } else if (url.contains("bedinabag")) {
+                                productPage = new Bedinabag(url);
+                            } else {
+                                System.out.println("Website is not supported");
+                            }
+                            checkproductPage(productPage);
+                            progress++;
+                            updateProgress(progress, 4);
+                            //   System.out.println("Progress is " + progress);
+
+                        }
+
+                        sqlConnector.close();
+                        resultSet.close();
+
+                        Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
+                            @Override
+                            public void run() {
+                                outputUrls.appendText("Removed:" + "\n");
+                                showcheckResults(removedProducts);
+                                outputUrls.appendText("Out of Stock:" + "\n");
+                                showcheckResults(oosProducts);
+                                outputUrls.appendText("Few Left" + "\n");
+                                showcheckResults(lowProducts);
+                                msgBox.setText("Check Completed!!");
+                            }
+                        });
+
+                    } catch(SQLException e){
+                        e.printStackTrace();
                 }
-                checkproductPage(productPage);
-//                progress++;
-//                progressBar.setProgress(progress/count);
+                    return null;
             }
 
-            sqlConnector.close();
-            resultSet.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        outputUrls.appendText("Removed:" + "\n");
-        showcheckResults(removedProducts);
-        outputUrls.appendText("Out of Stock" + "\n");
-        showcheckResults(oosProducts);
+                ;
+            }
+
+            ;
+
+        progressBar.progressProperty().
+
+            bind(task.progressProperty());
+        new
+
+            Thread(task).
+
+            start();
     }
+
+
+//        Runnable task = new Runnable() {    //Backend Thread
+//            @Override
+//            public void run() {
+//                Website productPage = null;
+//                int progress = 0;
+//
+//                try {
+//                    ResultSet resultSet = sqlConnector.query(sql);
+////            resultSet.last();
+////            count = resultSet.getRow();
+////            resultSet.first();
+//
+//                    while (resultSet.next()) {
+//
+//                        String url = resultSet.getString(1);
+//                        if (url.contains("redsgear")) {
+//                            productPage = new Redsgear(url);
+//                        } else if (url.contains("bedinabag")) {
+//                            productPage = new Bedinabag(url);
+//                        } else {
+//                            System.out.println("Website is not supported");
+//                        }
+//                        checkproductPage(productPage);
+//                        progress++;
+//                        int finalProgress = progress;
+//
+//                                System.out.println("Progress is " + finalProgress);
+//                                progressBar.setProgress(finalProgress/5);
+//
+//
+//                    }
+//
+//                    sqlConnector.close();
+//                    resultSet.close();
+//
+//                    Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
+//                        @Override
+//                        public void run() {
+//                            outputUrls.appendText("Removed:" + "\n");
+//                            showcheckResults(removedProducts);
+//                            outputUrls.appendText("Out of Stock:" + "\n");
+//                            showcheckResults(oosProducts);
+//                            outputUrls.appendText("Few Left" + "\n");
+//                            showcheckResults(lowProducts);
+//                            msgBox.setText("Check Completed!!");
+//                        }
+//                    });
+//
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        };
+
+//        new Thread(task).start();
+//
+//    }
 
 
     private void checkproductPage(Website productPage) {
         if (productPage.pagenotFound()) {   // If it returns 404
             removedProducts.add(productPage.getUrl());
+            return;
         }
 
-        if (productPage.isoutOfstock()) {   // If it is out of stock
+        if (productPage.isalmostGone()) {   // If it is almost gone
+            lowProducts.add(productPage.getUrl());
+            return;
+        }
+
+        if (productPage.isoutofStock()) {
             oosProducts.add(productPage.getUrl());
+            return;
         }
     }
 
@@ -205,4 +329,16 @@ public class Controller {
 
     }
 
+    public void checkEmptyInput() {
+        String input = inputUrls.getText();
+        boolean disableButtons = input.isEmpty() || input.trim().isEmpty();
+        addButton.setDisable(disableButtons);
+        deleteButton.setDisable(disableButtons);
+    }
+
+    public void checkEmptySearchInput() {
+        String input = searchBox.getText();
+        boolean disableButtons = input.isEmpty() || input.trim().isEmpty();
+        searchButton.setDisable(disableButtons);
+    }
 }
