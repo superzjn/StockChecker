@@ -20,22 +20,21 @@ public abstract class Website {
 
     public Website(String url) {
         this.url = url;
-        this.httpConn = Jsoup.connect(url);
+        this.httpConn = Jsoup.connect(url).timeout(20000);
 
     }
 
-    public abstract boolean isoutOfstock();
+    public abstract boolean isalmostGone();
+
+    public abstract boolean isoutofStock();
 
     public boolean pagenotFound() {
         statusCode = this.getStatusCode();
-        if (statusCode == 404) {
-            return true;
-        }
-        return false;
+        return statusCode == 404;   //return true if got 404
     }
 
 
-    public Document getDoc() {
+    public Document getDoc() {   //Get webpage content
 
         try {
             doc = this.httpConn.get();
@@ -68,7 +67,7 @@ public abstract class Website {
         this.url = url;
     }
 
-    public int getStatusCode() {
+    private int getStatusCode() {
 
         try {
             this.statusCode = httpConn.ignoreHttpErrors(true).execute().statusCode();

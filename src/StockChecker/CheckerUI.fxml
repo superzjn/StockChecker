@@ -22,7 +22,7 @@
             GridPane.rowIndex="0" onAction="#searchUrl"/>
 
     <!--Search Box-->
-    <TextField fx:id="searchBox" GridPane.columnIndex="1" GridPane.rowIndex="0">
+    <TextField fx:id="searchBox" GridPane.columnIndex="1" GridPane.rowIndex="0" onMouseMoved="#checkEmptySearchInput">
         <GridPane.margin>
             <Insets right="10.0"/>
         </GridPane.margin>
@@ -55,7 +55,7 @@
     </VBox>
 
     <!--Urls to be Added/Delete-->
-    <TextArea fx:id="inputUrls" GridPane.ColumnIndex="1" GridPane.rowIndex="1">
+    <TextArea fx:id="inputUrls" GridPane.ColumnIndex="1" GridPane.rowIndex="1" onMouseMoved="#checkEmptyInput">
         <padding>
             <Insets right="10"/>
         </padding>

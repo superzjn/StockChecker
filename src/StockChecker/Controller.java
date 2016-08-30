@@ -144,70 +144,58 @@ public class Controller {
             public Void call() {
                 Website productPage = null;
                 int progress = 0;
-                int count = 0;
+                int count;
 
                 try {
                     ResultSet resultSet = sqlConnector.query(sql);
+                    ResultSet rowCount = sqlConnector.query("select COUNT(*) from watchlist");
+                    rowCount.next();   // Basically you are positioning the cursor before the first row and then requesting data. You need to move the cursor to the first row.
+                    count = rowCount.getInt(1);
 
-                    if (resultSet.last()) {//make cursor to point to the last row in the ResultSet object
-                        count = resultSet.getRow();
-                        resultSet.beforeFirst();
+                    // System.out.println("Count is " + count);
 
+                    while (resultSet.next()) {
 
-                        System.out.println("Count is " + count);
-
-                        while (resultSet.next()) {
-
-                            String url = resultSet.getString(1);
-                            if (url.contains("redsgear")) {
-                                productPage = new Redsgear(url);
-                            } else if (url.contains("bedinabag")) {
-                                productPage = new Bedinabag(url);
-                            } else {
-                                System.out.println("Website is not supported");
-                            }
-                            checkproductPage(productPage);
-                            progress++;
-                            updateProgress(progress, 4);
-                            //   System.out.println("Progress is " + progress);
-
+                        String url = resultSet.getString(1);
+                        if (url.contains("redsgear")) {
+                            productPage = new Redsgear(url);
+                        } else if (url.contains("bedinabag")) {
+                            productPage = new Bedinabag(url);
+                        } else {
+                            System.out.println("Website is not supported");
                         }
+                        checkproductPage(productPage);
+                        progress++;
+                        updateProgress(progress, count);
+                        //   System.out.println("Progress is " + progress);
 
-                        sqlConnector.close();
-                        resultSet.close();
+                    }
 
-                        Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
-                            @Override
-                            public void run() {
-                                outputUrls.appendText("Removed:" + "\n");
-                                showcheckResults(removedProducts);
-                                outputUrls.appendText("Out of Stock:" + "\n");
-                                showcheckResults(oosProducts);
-                                outputUrls.appendText("Few Left" + "\n");
-                                showcheckResults(lowProducts);
-                                msgBox.setText("Check Completed!!");
-                            }
-                        });
+                    sqlConnector.close();
+                    resultSet.close();
 
-                    } catch(SQLException e){
-                        e.printStackTrace();
+                    Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
+                        @Override
+                        public void run() {
+                            outputUrls.appendText("Removed:" + "\n");
+                            showcheckResults(removedProducts);
+                            outputUrls.appendText("Out of Stock:" + "\n");
+                            showcheckResults(oosProducts);
+                            outputUrls.appendText("Few Left" + "\n");
+                            showcheckResults(lowProducts);
+                            msgBox.setText("Check Completed!!");
+                        }
+                    });
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
-                    return null;
+                return null;
             }
+        };
 
-                ;
-            }
-
-            ;
-
-        progressBar.progressProperty().
-
-            bind(task.progressProperty());
-        new
-
-            Thread(task).
-
-            start();
+        progressBar.progressProperty().bind(task.progressProperty());
+        new Thread(task).start();
     }
 
 
