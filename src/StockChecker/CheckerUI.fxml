@@ -10,33 +10,34 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
 
 <GridPane alignment="top_center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8.0.76-ea"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="StockChecker.Controller">
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="StockChecker.Controller" gridLinesVisible="false">
+    <columnConstraints>
+        <ColumnConstraints percentWidth="12.0"/>
+        <ColumnConstraints percentWidth="22.0"/>
+        <ColumnConstraints percentWidth="22.0"/>
+        <ColumnConstraints percentWidth="22.0"/>
+        <ColumnConstraints percentWidth="22.0"/>
+    </columnConstraints>
+
     <padding>
-        <Insets top="10"/>
+        <Insets left="10" top="10" right="10"/>
     </padding>
 
     <!--Search Button-->
-    <Button text="Search" fx:id="searchButton" GridPane.columnIndex="0" GridPane.halignment="CENTER"
-            GridPane.rowIndex="0" onAction="#searchUrl"/>
+    <Button text="Search" fx:id="searchButton" onAction="#searchUrl" GridPane.columnIndex="0" GridPane.rowIndex="0"
+            prefWidth="100"/>
 
     <!--Search Box-->
-    <TextField fx:id="searchBox" GridPane.columnIndex="1" GridPane.rowIndex="0" onMouseMoved="#checkEmptySearchInput">
-        <GridPane.margin>
-            <Insets right="10.0"/>
-        </GridPane.margin>
-    </TextField>
+    <TextField fx:id="searchBox" onMouseMoved="#checkEmptySearchInput" GridPane.columnIndex="1" GridPane.rowIndex="0"
+               GridPane.columnSpan="3"/>
 
-
-    <VBox GridPane.columnIndex="0" GridPane.rowIndex="1">
-        <padding>
-            <Insets top="10"/>
-            <Insets left="10"/>
-        </padding>
+    <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="100" spacing="10">
 
         <!--Add Button-->
-        <Button fx:id="addButton" prefWidth="200" text="Add " onAction="#addUrl">
+        <Button fx:id="addButton" text="Add " onAction="#addUrl" prefWidth="100">
             <graphic>
                 <ImageView>
                     <Image url="@/toolbarButtonGraphics/general/Add24.gif"/>
@@ -45,7 +46,7 @@
         </Button>
 
         <!--Delete Button-->
-        <Button fx:id="deleteButton" prefWidth="200" text="Delete" onAction="#delUrl">
+        <Button fx:id="deleteButton" text="Delete" onAction="#delUrl" prefWidth="100">
             <graphic>
                 <ImageView>
                     <Image url="@/toolbarButtonGraphics/general/Delete24.gif"/>
@@ -55,20 +56,14 @@
     </VBox>
 
     <!--Urls to be Added/Delete-->
-    <TextArea fx:id="inputUrls" GridPane.ColumnIndex="1" GridPane.rowIndex="1" onMouseMoved="#checkEmptyInput">
-        <padding>
-            <Insets right="10"/>
-        </padding>
-    </TextArea>
+    <TextArea fx:id="inputUrlsBox" GridPane.ColumnIndex="1" GridPane.rowIndex="1" onMouseMoved="#checkEmptyInput"
+              GridPane.columnSpan="4"/>
 
-    <VBox GridPane.columnIndex="0" GridPane.rowIndex="2">
-        <padding>
-            <Insets top="10"/>
-            <Insets left="10"/>
-        </padding>
+
+    <VBox GridPane.columnIndex="0" GridPane.rowIndex="2" spacing="10">
 
         <!--ShowAll Button-->
-        <Button fx:id="showButton" prefWidth="200" text="Show All" onAction="#showAll">
+        <Button fx:id="showButton" text="Show All" onAction="#showAll" prefWidth="100">
             <graphic>
                 <ImageView>
                     <Image url="@/toolbarButtonGraphics/general/History24.gif"/>
@@ -77,27 +72,67 @@
         </Button>
 
         <!--Check Button-->
-        <Button fx:id="checkButton" prefWidth="200" text="Check" onAction="#checkStock">
+        <Button fx:id="checkButton" text="Check" onAction="#checkStock" prefWidth="100">
             <graphic>
                 <ImageView>
                     <Image url="@/toolbarButtonGraphics/general/TipOfTheDay24.gif"/>
                 </ImageView>
             </graphic>
         </Button>
+
+        <!--ClearAll Button-->
+        <Button fx:id="clearButton" text="Clear All" onAction="#clearUI" prefWidth="100">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/navigation/Home24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+
+        <!--Clean Database Button-->
+        <Button fx:id="cleandbButton" text="Clean DB" onAction="#cleanDB" prefWidth="100">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/general/Stop24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+
     </VBox>
 
+
     <!--Result Box-->
-    <TextArea fx:id="outputUrls" GridPane.ColumnIndex="1" GridPane.rowIndex="2" editable="false">
-        <padding>
-            <Insets right="10"/>
-        </padding>
+    <TextArea fx:id="outputUrlsBox" GridPane.ColumnIndex="1" GridPane.rowIndex="2" editable="false"
+              GridPane.columnSpan="4">
+
     </TextArea>
 
+
+    <!--Labels-->
+    <Label text="Removed" GridPane.ColumnIndex="1" GridPane.rowIndex="3"/>
+    <Label text="Out Of Stock" GridPane.ColumnIndex="2" GridPane.rowIndex="3"/>
+    <Label text="Few Left" GridPane.ColumnIndex="3" GridPane.rowIndex="3"/>
+    <Label text="Not Supported" GridPane.ColumnIndex="4" GridPane.rowIndex="3"/>
+
+    <!--Result Box-->
+    <TextArea fx:id="removedItemsBox" GridPane.ColumnIndex="1" GridPane.rowIndex="4" editable="false"/>
+
+    <!--Result Box-->
+    <TextArea fx:id="oosItemsBox" GridPane.ColumnIndex="2" GridPane.rowIndex="4" editable="false"/>
+
+    <!--Result Box-->
+    <TextArea fx:id="lowItemsBox" GridPane.ColumnIndex="3" GridPane.rowIndex="4" editable="false"/>
+
+    <!--Result Box-->
+    <TextArea fx:id="notSupportedBox" GridPane.ColumnIndex="4" GridPane.rowIndex="4" editable="false"/>
+
     <!--Progress Bar-->
-    <ProgressBar fx:id="progressBar" prefWidth="350" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    <ProgressBar fx:id="progressBar" prefWidth="650" GridPane.columnIndex="1" GridPane.rowIndex="5"
+                 GridPane.columnSpan="3"/>
 
-    <!--Message -->
+    <Label fx:id="prgressText" GridPane.rowIndex="5" GridPane.columnIndex="4"/>
 
-    <Label fx:id="msgBox" text="Message" GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+    <!--Status Message -->
+    <Label fx:id="msgBox" text="Message" GridPane.rowIndex="6" GridPane.columnSpan="4"/>
 
 </GridPane>

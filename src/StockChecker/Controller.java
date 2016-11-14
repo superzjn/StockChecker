@@ -1,5 +1,6 @@
 package StockChecker;
 
+import StockChecker.websites.*;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -16,13 +17,27 @@ public class Controller {
     @FXML
     private Button addButton;
     @FXML
+    private Button clearButton;
+    @FXML
+    private Button cleandbButton;
+    @FXML
     private Button deleteButton;
     @FXML
-    private TextArea inputUrls;
+    private TextArea inputUrlsBox;
     @FXML
-    private TextArea outputUrls;
+    private TextArea outputUrlsBox;
+    @FXML
+    private TextArea removedItemsBox;
+    @FXML
+    private TextArea oosItemsBox;
+    @FXML
+    private TextArea lowItemsBox;
+    @FXML
+    private TextArea notSupportedBox;
     @FXML
     private Label msgBox;
+    @FXML
+    private Label prgressText;
     @FXML
     private TextField searchBox;
     @FXML
@@ -34,6 +49,7 @@ public class Controller {
     private ArrayList<String> removedProducts = new ArrayList<>();
     private ArrayList<String> lowProducts = new ArrayList<>();
     private ArrayList<String> oosProducts = new ArrayList<>();
+    private ArrayList<String> notSupportedurls = new ArrayList<>();
 
     @FXML
     public void initialize() {
@@ -45,7 +61,7 @@ public class Controller {
 
     public void showAll() {
 
-        outputUrls.clear();
+        outputUrlsBox.clear();
         sqlConnector = new MySQLConnector();
         sql = "SELECT * FROM watchlist";
         ResultSet resultSet;
@@ -55,7 +71,7 @@ public class Controller {
             resultSet = sqlConnector.query(sql);
 
             while (resultSet.next()) {
-                outputUrls.appendText(resultSet.getString(1) + "\n");
+                outputUrlsBox.appendText(resultSet.getString(1) + "\n");
             }
             // Get count
             resultSet.last();
@@ -75,7 +91,7 @@ public class Controller {
         sqlConnector = new MySQLConnector();
         int count;
 
-        String input = inputUrls.getText();
+        String input = inputUrlsBox.getText();
 
         if (!input.isEmpty()) {
             String[] urls = input.split("[\\r\\n]+");     // make it works for Windows, UNIX and Mac, and ignore empty lines
@@ -105,7 +121,7 @@ public class Controller {
         sqlConnector = new MySQLConnector();
         int count;
 
-        String input = inputUrls.getText();
+        String input = inputUrlsBox.getText();
         if (!input.isEmpty()) {
             String[] urls = input.split("[\\r\\n]+");     // make it works for Windows, UNIX and Mac, and ignore empty lines
             count = urls.length;
@@ -129,10 +145,16 @@ public class Controller {
 
     public void checkStock() {
 
-        outputUrls.clear();
+        //UI clear
+        removedItemsBox.clear();
+        oosItemsBox.clear();
+        lowItemsBox.clear();
+        notSupportedBox.clear();
+
         removedProducts.clear();
         oosProducts.clear();
         lowProducts.clear();
+        notSupportedurls.clear();
 
         sqlConnector = new MySQLConnector();
         sql = "SELECT * FROM watchlist";
@@ -142,7 +164,7 @@ public class Controller {
         Task task = new Task<Void>() {    //Backend Thread
             @Override
             public Void call() {
-                Website productPage = null;
+
                 int progress = 0;
                 int count;
 
@@ -155,37 +177,62 @@ public class Controller {
                     // System.out.println("Count is " + count);
 
                     while (resultSet.next()) {
-
+                        Website productPage = null;
                         String url = resultSet.getString(1);
                         if (url.contains("redsgear")) {
                             productPage = new Redsgear(url);
                         } else if (url.contains("bedinabag")) {
                             productPage = new Bedinabag(url);
-                        } else {
-                            System.out.println("Website is not supported");
+                        } else if (url.contains("walmart")) {
+                            productPage = new Walmart(url);
+                        } else if (url.contains("homedepot")) {
+                            productPage = new Homedepot(url);
+                        } else if (url.contains("amazon")) {
+                            productPage = new Amazon(url);
                         }
+                        //else if (url.contains("sears")) {
+                        //      productPage = new Sears(url);
+                        //  }
+                        else {
+                            notSupportedurls.add(url);
+                            System.out.println("Website is not supported");
+                            notSupportedBox.appendText(url + "\n");
+                        }
+
+                        Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
+                            @Override
+                            public void run() {
+                                msgBox.setText(url);
+                            }
+                        });
+
                         checkproductPage(productPage);
+
                         progress++;
                         updateProgress(progress, count);
-                        //   System.out.println("Progress is " + progress);
-
+                        //     prgressText.setText(progress/count +"%");
+                        double test = (double) ((progress / count) * 100);
+                        System.out.println("Progress is " + test + "%");
                     }
 
                     sqlConnector.close();
                     resultSet.close();
 
-                    Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
+/*                    Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
                         @Override
                         public void run() {
-                            outputUrls.appendText("Removed:" + "\n");
+
+                            removedItemsBox.appendText("Removed:" + "\n");
                             showcheckResults(removedProducts);
-                            outputUrls.appendText("Out of Stock:" + "\n");
+                            oosItemsBox.appendText("Out of Stock:" + "\n");
                             showcheckResults(oosProducts);
-                            outputUrls.appendText("Few Left" + "\n");
+                            lowItemsBox.appendText("Few Left" + "\n");
                             showcheckResults(lowProducts);
+                            notSupportedBox.appendText("Not Supported" + "\n");
+                            showcheckResults(notSupportedurls);
                             msgBox.setText("Check Completed!!");
                         }
-                    });
+                    });*/
 
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -199,78 +246,26 @@ public class Controller {
     }
 
 
-//        Runnable task = new Runnable() {    //Backend Thread
-//            @Override
-//            public void run() {
-//                Website productPage = null;
-//                int progress = 0;
-//
-//                try {
-//                    ResultSet resultSet = sqlConnector.query(sql);
-////            resultSet.last();
-////            count = resultSet.getRow();
-////            resultSet.first();
-//
-//                    while (resultSet.next()) {
-//
-//                        String url = resultSet.getString(1);
-//                        if (url.contains("redsgear")) {
-//                            productPage = new Redsgear(url);
-//                        } else if (url.contains("bedinabag")) {
-//                            productPage = new Bedinabag(url);
-//                        } else {
-//                            System.out.println("Website is not supported");
-//                        }
-//                        checkproductPage(productPage);
-//                        progress++;
-//                        int finalProgress = progress;
-//
-//                                System.out.println("Progress is " + finalProgress);
-//                                progressBar.setProgress(finalProgress/5);
-//
-//
-//                    }
-//
-//                    sqlConnector.close();
-//                    resultSet.close();
-//
-//                    Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
-//                        @Override
-//                        public void run() {
-//                            outputUrls.appendText("Removed:" + "\n");
-//                            showcheckResults(removedProducts);
-//                            outputUrls.appendText("Out of Stock:" + "\n");
-//                            showcheckResults(oosProducts);
-//                            outputUrls.appendText("Few Left" + "\n");
-//                            showcheckResults(lowProducts);
-//                            msgBox.setText("Check Completed!!");
-//                        }
-//                    });
-//
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        };
-
-//        new Thread(task).start();
-//
-//    }
-
-
     private void checkproductPage(Website productPage) {
+        if (productPage == null) {
+            return;
+        }
+
         if (productPage.pagenotFound()) {   // If it returns 404
             removedProducts.add(productPage.getUrl());
+            removedItemsBox.appendText(productPage.getUrl() + "\n");
             return;
         }
 
         if (productPage.isalmostGone()) {   // If it is almost gone
             lowProducts.add(productPage.getUrl());
+            lowItemsBox.appendText(productPage.getUrl() + "\n");
             return;
         }
 
         if (productPage.isoutofStock()) {
             oosProducts.add(productPage.getUrl());
+            oosItemsBox.appendText(productPage.getUrl() + "\n");
             return;
         }
     }
@@ -278,7 +273,7 @@ public class Controller {
     private void showcheckResults(ArrayList<String> list) {
 
         for (String url : list) {
-            outputUrls.appendText(url + "\n");
+            outputUrlsBox.appendText(url + "\n");
         }
     }
 
@@ -292,15 +287,15 @@ public class Controller {
         if (!input.isEmpty()) {
             input = input.trim();
 
-            outputUrls.clear();
+            outputUrlsBox.clear();
             sql = "SELECT * FROM watchlist WHERE Urls ='" + input + "'";
             resultSet = sqlConnector.query(sql);
 
             try {
                 if (resultSet.next()) {
-                    outputUrls.setText("It's there");
+                    outputUrlsBox.setText("It's there");
                 } else {
-                    outputUrls.setText("Not Exist");
+                    outputUrlsBox.setText("Not Exist");
                 }
                 resultSet.close();
 
@@ -313,12 +308,30 @@ public class Controller {
         } else {
             msgBox.setText("Please Input");
         }
+    }
 
 
+    public void cleanDB() {
+        sqlConnector = new MySQLConnector();
+        sql = "DELETE FROM  watchlist";
+
+        if (sqlConnector.update(sql) == 1) {
+            msgBox.setText("All Records cleared.");
+        }
+    }
+
+    public void clearUI() {
+        removedItemsBox.clear();
+        oosItemsBox.clear();
+        lowItemsBox.clear();
+        notSupportedBox.clear();
+        outputUrlsBox.clear();
+        searchBox.clear();
+        inputUrlsBox.clear();
     }
 
     public void checkEmptyInput() {
-        String input = inputUrls.getText();
+        String input = inputUrlsBox.getText();
         boolean disableButtons = input.isEmpty() || input.trim().isEmpty();
         addButton.setDisable(disableButtons);
         deleteButton.setDisable(disableButtons);

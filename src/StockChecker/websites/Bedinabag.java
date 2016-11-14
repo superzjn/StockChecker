@@ -1,18 +1,19 @@
-package StockChecker;
+package StockChecker.websites;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
- * Created by jzhang9 on 8/24/2016.
+ * Created by jzhang9 on 8/26/2016.
  */
-public class Redsgear extends Website {
+public class Bedinabag extends Website {
 
-    public Redsgear(String url) {
+    public Bedinabag(String url) {
         super(url);
     }
 
     @Override
+
     public boolean isalmostGone() {
 
         doc = getDoc();
@@ -25,11 +26,12 @@ public class Redsgear extends Website {
 
     @Override
     public boolean isoutofStock() {
+
         doc = getDoc();
 
         Element qtyBox = doc.getElementById("qty");
 
-        return qtyBox == null;
+        return qtyBox == null;  //return true if got null
 
     }
 }

@@ -1,4 +1,4 @@
-package StockChecker;
+package StockChecker.websites;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -15,10 +15,9 @@ public abstract class Website {
     private String oosMessage;
     private int statusCode;
     private Connection httpConn;
-    protected Document doc;
+    Document doc;
 
-
-    public Website(String url) {
+    Website(String url) {
         this.url = url;
         this.httpConn = Jsoup.connect(url).timeout(20000);
 
@@ -34,7 +33,7 @@ public abstract class Website {
     }
 
 
-    public Document getDoc() {   //Get webpage content
+    Document getDoc() {   //Get webpage content
 
         try {
             doc = this.httpConn.get();
