@@ -3,6 +3,8 @@ package StockChecker.websites;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.SocketTimeoutException;
+
 /**
  * Created by jzhang9 on 8/26/2016.
  */
@@ -16,7 +18,11 @@ public class Bedinabag extends Website {
 
     public boolean isalmostGone() {
 
-        doc = getDoc();
+        try {
+            doc = getDoc();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Time out catch from website sub class");
+        }
 
         Elements numberLeft = doc.getElementsByClass("availability-only");
 
@@ -27,7 +33,11 @@ public class Bedinabag extends Website {
     @Override
     public boolean isoutofStock() {
 
-        doc = getDoc();
+        try {
+            doc = getDoc();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Time out catch from website sub class");
+        }
 
         Element qtyBox = doc.getElementById("qty");
 

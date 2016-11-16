@@ -160,12 +160,11 @@ public class Controller {
         sql = "SELECT * FROM watchlist";
         //ResultSet resultSet;
 
-
         Task task = new Task<Void>() {    //Backend Thread
             @Override
             public Void call() {
 
-                int progress = 0;
+                float progress = 0;
                 int count;
 
                 try {
@@ -195,44 +194,28 @@ public class Controller {
                         //  }
                         else {
                             notSupportedurls.add(url);
-                            System.out.println("Website is not supported");
+                            //  System.out.println("Website is not supported");
                             notSupportedBox.appendText(url + "\n");
                         }
-
-                        Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
-                            @Override
-                            public void run() {
-                                msgBox.setText(url);
-                            }
-                        });
 
                         checkproductPage(productPage);
 
                         progress++;
+                        float percent = (100 * progress) / (float) count;
+
+                        Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
+                            @Override
+                            public void run() {
+                                msgBox.setText(url);    // Current url is being checked
+                                prgressText.setText(String.format("%.0f%%", percent));   // Progress percent
+                            }
+
+                        });
                         updateProgress(progress, count);
-                        //     prgressText.setText(progress/count +"%");
-                        double test = (double) ((progress / count) * 100);
-                        System.out.println("Progress is " + test + "%");
                     }
 
                     sqlConnector.close();
                     resultSet.close();
-
-/*                    Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
-                        @Override
-                        public void run() {
-
-                            removedItemsBox.appendText("Removed:" + "\n");
-                            showcheckResults(removedProducts);
-                            oosItemsBox.appendText("Out of Stock:" + "\n");
-                            showcheckResults(oosProducts);
-                            lowItemsBox.appendText("Few Left" + "\n");
-                            showcheckResults(lowProducts);
-                            notSupportedBox.appendText("Not Supported" + "\n");
-                            showcheckResults(notSupportedurls);
-                            msgBox.setText("Check Completed!!");
-                        }
-                    });*/
 
                 } catch (SQLException e) {
                     e.printStackTrace();

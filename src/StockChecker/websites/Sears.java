@@ -3,6 +3,7 @@ package StockChecker.websites;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.net.SocketTimeoutException;
 import java.util.regex.Pattern;
 
 /**
@@ -24,7 +25,11 @@ public class Sears extends Website {
     @Override
     public boolean isoutofStock() {
 
-        doc = getDoc();
+        try {
+            doc = getDoc();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Time out catch from website sub class");
+        }
         System.out.println(doc.toString());
         Elements oosMessage = doc.getElementsMatchingText(Pattern.compile("Temporarily unavailable"));
         return oosMessage.size() != 0;   //return true if the message exists

@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 /**
  * Created by jzhang9 on 8/24/2016.
@@ -19,7 +20,7 @@ public abstract class Website {
 
     Website(String url) {
         this.url = url;
-        this.httpConn = Jsoup.connect(url).timeout(20000);
+        this.httpConn = Jsoup.connect(url).timeout(40000);
 
     }
 
@@ -32,18 +33,25 @@ public abstract class Website {
         return statusCode == 404;   //return true if got 404
     }
 
-
-    Document getDoc() {   //Get webpage content
+    Document getDoc() throws SocketTimeoutException {   //Get webpage content
 
         try {
             doc = this.httpConn.get();
-
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
+            try {
+                System.out.println("Trying again :" + url);
+                doc = this.httpConn.get();
+            } catch (Exception ex) {
+                ex.getStackTrace();
+            }
+            //  System.out.println("Time out, throwing exception");
+            throw new SocketTimeoutException("Webpage timeout");
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return doc;
-        }
+    }
 
 
     public void setDoc(Document doc) {

@@ -1,5 +1,7 @@
 package StockChecker.websites;
 
+import java.net.SocketTimeoutException;
+
 /**
  * Created by Matus Z on 11/7/2016.
  */
@@ -17,7 +19,11 @@ public class Homedepot extends Website {
     @Override
 
     public boolean isoutofStock() {
-        doc = getDoc();
+        try {
+            doc = getDoc();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Time out catch from website sub class");
+        }
         String text = doc.toString().toLowerCase();
         int count = countSubstring("out of stock", text);
         //For homedepot, if "out of stcok" appears 6 times, then the item is OOS stock.

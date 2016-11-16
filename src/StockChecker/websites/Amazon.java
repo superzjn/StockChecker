@@ -2,6 +2,7 @@ package StockChecker.websites;
 
 import org.jsoup.select.Elements;
 
+import java.net.SocketTimeoutException;
 import java.util.regex.Pattern;
 
 /**
@@ -15,7 +16,11 @@ public class Amazon extends Website {
 
     @Override
     public boolean isalmostGone() {
-        doc = getDoc();
+        try {
+            doc = getDoc();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Time out catch from website sub class");
+        }
 
         Elements numberLeft = doc.getElementsMatchingText(Pattern.compile("Only \\d left in stock"));
         return numberLeft.size() != 0;   //return true if the message exists

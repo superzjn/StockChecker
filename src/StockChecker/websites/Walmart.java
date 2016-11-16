@@ -2,6 +2,7 @@ package StockChecker.websites;
 
 import org.jsoup.select.Elements;
 
+import java.net.SocketTimeoutException;
 import java.util.regex.Pattern;
 
 /**
@@ -15,9 +16,11 @@ public class Walmart extends Website {
 
     @Override
     public boolean isalmostGone() {
-
-        doc = getDoc();
-
+        try {
+            doc = getDoc();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Time out catch from website sub class");
+        }
         Elements numberLeft = doc.getElementsMatchingText(Pattern.compile("Only \\d left!"));
         return numberLeft.size() != 0;   //return true if the message exists
 
@@ -25,7 +28,11 @@ public class Walmart extends Website {
 
     @Override
     public boolean isoutofStock() {
-        doc = getDoc();
+        try {
+            doc = getDoc();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Time out catch from website sub class");
+        }
 
         Elements oosMessage = doc.getElementsByClass("price-oos");
         return oosMessage.size() != 0;   //return true if the message exists
