@@ -3,9 +3,11 @@
     <output-path>$PROJECT_DIR$/out/artifacts/StockChecker_jar</output-path>
     <root id="archive" name="StockChecker.jar">
       <element id="module-output" name="StockChecker" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/jlfgr-1_0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/mysql-connector-java-5.1.39-bin.jar" path-in-jar="/" />
-      <element id="file-copy" path="$PROJECT_DIR$/jsoup-1.10.1.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/resources/jlfgr-1_0.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/resources/jsoup-1.10.1.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/resources/mysql-connector-java-5.1.39-bin.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/resources/selenium/client-combined-3.0.1-nodeps.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/resources/selenium/selenium-server-standalone-3.0.1.jar" />
     </root>
   </artifact>
 </component>
