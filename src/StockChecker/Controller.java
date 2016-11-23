@@ -188,11 +188,11 @@ public class Controller {
                             productPage = new Homedepot(url);
                         } else if (url.contains("amazon")) {
                             productPage = new Amazon(url);
-                        }
-                        //else if (url.contains("sears")) {
-                        //      productPage = new Sears(url);
-                        //  }
-                        else {
+                        } else if (url.contains("lowes")) {
+                            productPage = new Lowes(url);
+                        } else if (url.contains("sears")) {
+                            productPage = new Sears(url);
+                        } else {
                             notSupportedurls.add(url);
                             //  System.out.println("Website is not supported");
                             notSupportedBox.appendText(url + "\n");
@@ -217,15 +217,25 @@ public class Controller {
                     sqlConnector.close();
                     resultSet.close();
 
-                } catch (SQLException e) {
+                } catch (
+                        SQLException e)
+
+                {
                     e.printStackTrace();
                 }
                 return null;
             }
         };
 
-        progressBar.progressProperty().bind(task.progressProperty());
-        new Thread(task).start();
+        progressBar.progressProperty().
+
+                bind(task.progressProperty());
+        new
+
+                Thread(task).
+
+                start();
+
     }
 
 

@@ -1,12 +1,11 @@
 package StockChecker.websites;
 
-
 /**
- * Created by jzhang9 on 11/9/2016.
+ * Created by Matus Z on 11/22/2016.
  */
-public class Sears extends Website {
+public class Lowes extends Website {
 
-    public Sears(String url) {
+    public Lowes(String url) {
         super(url);
     }
 
@@ -15,8 +14,6 @@ public class Sears extends Website {
         return false;
     }
 
-
-
     @Override
     public boolean isoutofStock() {
         try {
@@ -24,7 +21,7 @@ public class Sears extends Website {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        int count = countSubstring("Temporarily unavailable", html);
+        int count = countSubstring("Currently unavailable", html);
         return count > 0;
     }
 
