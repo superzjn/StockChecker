@@ -11,7 +11,7 @@ class MySQLConnector {
     private PreparedStatement preparedStatement = null;  // SQL statement
 
     private static final String driverName = "com.mysql.jdbc.Driver";
-    private static final String url = "jdbc:mysql://localhost:3306/stockchecker?autoReconnect=true&useSSL=false";  // Database location
+    private static final String url = "jdbc:mysql://localhost:3306/";  // Database location
     private static final String user = "root";      // username
     private static final String password = "root";   // password
 
@@ -22,6 +22,9 @@ class MySQLConnector {
 
             preparedStatement = connection.prepareStatement("CREATE DATABASE IF NOT EXISTS stockchecker;");
             preparedStatement.execute();
+
+            String newurl = "jdbc:mysql://localhost:3306/stockchecker?autoReconnect=true&useSSL=false";
+            connection = DriverManager.getConnection(newurl, user, password);
 
             preparedStatement = connection.prepareStatement("USE stockchecker;");
             preparedStatement.execute();

@@ -74,6 +74,7 @@ public abstract class Website {
             dr.get(url);
             html = dr.getPageSource();
             dr.close();
+            dr.quit();   // end the process
         } catch (Exception e) {
             e.printStackTrace();
         }
