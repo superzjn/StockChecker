@@ -6,7 +6,7 @@ import java.net.SocketTimeoutException;
 import java.util.regex.Pattern;
 
 /**
- * Created by jzhang9 on 8/26/2016.
+ * Created by Matus on 8/26/2016.
  */
 public class Walmart extends Website {
 
@@ -34,7 +34,7 @@ public class Walmart extends Website {
             System.out.println("Time out catch from website sub class");
         }
 
-        Elements oosMessage = doc.getElementsByClass("price-oos");
+        Elements oosMessage = doc.getElementsMatchingText(Pattern.compile("Only \\d left!"));
         return oosMessage.size() != 0;   //return true if the message exists
     }
 

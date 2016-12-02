@@ -5,12 +5,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 /**
- * Created by jzhang9 on 8/24/2016.
+ * Created by Matus on 8/24/2016.
  */
 public abstract class Website {
 
@@ -65,11 +68,13 @@ public abstract class Website {
 //            System.setProperty("webdriver.ie.driver", "resources/selenium/webdriver/IEDriverServer.exe");
 //            WebDriver dr = new InternetExplorerDriver();
 
-//            System.setProperty("webdriver.gecko.driver", "resources/selenium/webdriver/geckodriver.exe");
-//           WebDriver dr = new FirefoxDriver();
+            System.setProperty("webdriver.gecko.driver", "resources/selenium/webdriver/geckodriver.exe");
+            FirefoxProfile profile = new FirefoxProfile();
 
-            System.setProperty("webdriver.chrome.driver", "resources/selenium/webdriver/chromedriver.exe");
-            WebDriver dr = new ChromeDriver();
+            WebDriver dr = new FirefoxDriver();
+
+//            System.setProperty("webdriver.chrome.driver", "resources/selenium/webdriver/chromedriver.exe");
+//            WebDriver dr = new ChromeDriver();
 
             dr.get(url);
             html = dr.getPageSource();

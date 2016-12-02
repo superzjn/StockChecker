@@ -6,7 +6,7 @@ import java.net.SocketTimeoutException;
 import java.util.regex.Pattern;
 
 /**
- * Created by jzhang9 on 8/26/2016.
+ * Created by Matus on 8/26/2016.
  */
 public class Amazon extends Website {
 
@@ -29,9 +29,17 @@ public class Amazon extends Website {
 
     @Override
     public boolean isoutofStock() {
-        return false;
-    }
 
+
+        try {
+            doc = getDoc();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Time out catch from website sub class");
+        }
+
+        Elements oosMessage = doc.getElementsMatchingText(Pattern.compile("Currently unavailable"));
+        return oosMessage.size() != 0;   //return true if the message exists
+    }
 }
 
 
