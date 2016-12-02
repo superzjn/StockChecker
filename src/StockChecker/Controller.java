@@ -192,6 +192,10 @@ public class Controller {
                             productPage = new Lowes(url);
                         } else if (url.contains("sears")) {
                             productPage = new Sears(url);
+                        } else if (url.contains("overstock")) {
+                            productPage = new Overstock(url);
+                        } else if (url.contains("bedbathandbeyond")) {
+                            productPage = new BedBathBeyond(url);
                         } else {
                             notSupportedurls.add(url);
                             //  System.out.println("Website is not supported");
