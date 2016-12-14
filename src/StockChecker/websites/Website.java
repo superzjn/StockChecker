@@ -68,13 +68,12 @@ public abstract class Website {
 //            System.setProperty("webdriver.ie.driver", "resources/selenium/webdriver/IEDriverServer.exe");
 //            WebDriver dr = new InternetExplorerDriver();
 
-            System.setProperty("webdriver.gecko.driver", "resources/selenium/webdriver/geckodriver.exe");
-            FirefoxProfile profile = new FirefoxProfile();
+//            System.setProperty("webdriver.gecko.driver", "resources/selenium/webdriver/geckodriver.exe");
+//            FirefoxProfile profile = new FirefoxProfile();
+//            WebDriver dr = new FirefoxDriver();
 
-            WebDriver dr = new FirefoxDriver();
-
-//            System.setProperty("webdriver.chrome.driver", "resources/selenium/webdriver/chromedriver.exe");
-//            WebDriver dr = new ChromeDriver();
+            System.setProperty("webdriver.chrome.driver", "resources/selenium/webdriver/chromedriver.exe");
+            WebDriver dr = new ChromeDriver();
 
             dr.get(url);
             html = dr.getPageSource();
