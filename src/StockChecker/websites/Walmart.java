@@ -34,7 +34,7 @@ public class Walmart extends Website {
             System.out.println("Time out catch from website sub class");
         }
 
-        Elements oosMessage = doc.getElementsMatchingText(Pattern.compile("Only \\d left!"));
+        Elements oosMessage = doc.getElementsMatchingText(Pattern.compile("Out of stock"));
         return oosMessage.size() != 0;   //return true if the message exists
     }
 
