@@ -37,7 +37,7 @@ public abstract class Website {
 
     public boolean pagenotFound() {
         statusCode = this.getStatusCode();
-        return statusCode == 404;   //return true if got 404
+        return statusCode == 404 || statusCode == 520;   //return true if got 404
     }
 
     Document getDoc() throws SocketTimeoutException {   //Get webpage content
