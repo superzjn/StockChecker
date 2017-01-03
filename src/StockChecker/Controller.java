@@ -17,8 +17,6 @@ public class Controller {
     @FXML
     private Button addButton;
     @FXML
-    private Button clearButton;
-    @FXML
     private Button cleandbButton;
     @FXML
     private Button deleteButton;
@@ -94,7 +92,7 @@ public class Controller {
         String input = inputUrlsBox.getText();
 
         if (!input.isEmpty()) {
-            String[] urls = input.split("[\\r\\n]+");     // make it works for Windows, UNIX and Mac, and ignore empty lines
+            String[] urls = input.trim().split("[\\r\\n]+");     // make it works for Windows, UNIX and Mac, and ignore empty lines
             count = urls.length;
 
             for (String str : urls) {
@@ -143,13 +141,79 @@ public class Controller {
         }
     }
 
+    //Check if the item back in stock
+    public void checkifbackinStock() {
+
+        ArrayList<String> backinstockItems = new ArrayList<>();
+
+        sqlConnector = new MySQLConnector();
+        sql = "SELECT * FROM watchlist";
+        //ResultSet resultSet;
+
+        Task task = new Task<Void>() {    //Backend Thread
+            @Override
+            public Void call() {
+
+                float progress = 0;
+                int count;
+
+                try {
+                    ResultSet resultSet = sqlConnector.query(sql);
+                    ResultSet rowCount = sqlConnector.query("select COUNT(*) from watchlist");
+                    rowCount.next();   // Basically you are positioning the cursor before the first row and then requesting data. You need to move the cursor to the first row.
+                    count = rowCount.getInt(1);
+
+                    while (resultSet.next()) {
+                        String url = resultSet.getString(1);
+                        Website productPage = detectWebsite(url);
+                        if (productPage.pagenotFound()) {   // If it returns 404
+                            removedProducts.add(productPage.getUrl());
+                            removedItemsBox.appendText(productPage.getUrl() + "\n");
+                        }
+                        else if (!productPage.isoutofStock() && productPage !=null) {
+                            backinstockItems.add(productPage.getUrl());
+                            notSupportedBox.appendText(productPage.getUrl() + "\n");  // Add backin Stock item to "Not supported websites" box
+                        }
+
+                        progress++;
+                        float percent = (100 * progress) / (float) count;
+
+                        Platform.runLater(new Runnable() {         // Go back to UI Thread and update UI
+                            @Override
+                            public void run() {
+                                msgBox.setText(url);    // Current url is being checked
+                                prgressText.setText(String.format("%.0f%%", percent));   // Progress percent
+                            }
+
+                        });
+                        updateProgress(progress, count);
+                    }
+
+                    sqlConnector.close();
+                    resultSet.close();
+
+                } catch (SQLException e)
+
+                {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        progressBar.progressProperty().
+
+                bind(task.progressProperty());
+        new
+
+                Thread(task).
+
+                start();
+    }
+
+
     public void checkStock() {
 
-        //UI clear
-        removedItemsBox.clear();
-        oosItemsBox.clear();
-        lowItemsBox.clear();
-        notSupportedBox.clear();
+        clearResultBoxes();
 
         removedProducts.clear();
         oosProducts.clear();
@@ -176,34 +240,8 @@ public class Controller {
                     // System.out.println("Count is " + count);
 
                     while (resultSet.next()) {
-                        Website productPage = null;
                         String url = resultSet.getString(1);
-                        if (url.contains("redsgear")) {
-                            productPage = new Redsgear(url);
-                        } else if (url.contains("bedinabag")) {
-                            productPage = new Bedinabag(url);
-                        } else if (url.contains("walmart")) {
-                            productPage = new Walmart(url);
-                        } else if (url.contains("homedepot")) {
-                            productPage = new Homedepot(url);
-                        } else if (url.contains("amazon")) {
-                            productPage = new Amazon(url);
-                        } else if (url.contains("lowes")) {
-                            productPage = new Lowes(url);
-                        } else if (url.contains("sears")) {
-                            productPage = new Sears(url);
-                        } else if (url.contains("overstock")) {
-                            productPage = new Overstock(url);
-                        } else if (url.contains("bedbathandbeyond")) {
-                            productPage = new BedBathBeyond(url);
-                        } else {
-                            notSupportedurls.add(url);
-                            //  System.out.println("Website is not supported");
-                            notSupportedBox.appendText(url + "\n");
-                        }
-
-                        checkproductPage(productPage);
-
+                        checkproductPage(url);
                         progress++;
                         float percent = (100 * progress) / (float) count;
 
@@ -221,8 +259,7 @@ public class Controller {
                     sqlConnector.close();
                     resultSet.close();
 
-                } catch (
-                        SQLException e)
+                } catch (SQLException e)
 
                 {
                     e.printStackTrace();
@@ -242,8 +279,39 @@ public class Controller {
 
     }
 
+    private Website detectWebsite(String url) {
+        Website productPage;
+        if (url.contains("redsgear")) {
+            productPage = new Redsgear(url);
+        } else if (url.contains("bedinabag")) {
+            productPage = new Bedinabag(url);
+        } else if (url.contains("walmart")) {
+            productPage = new Walmart(url);
+        } else if (url.contains("homedepot")) {
+            productPage = new Homedepot(url);
+        } else if (url.contains("amazon")) {
+            productPage = new Amazon(url);
+        } else if (url.contains("lowes")) {
+            productPage = new Lowes(url);
+        } else if (url.contains("sears")) {
+            productPage = new Sears(url);
+        } else if (url.contains("overstock")) {
+            productPage = new Overstock(url);
+        } else if (url.contains("bedbathandbeyond")) {
+            productPage = new BedBathBeyond(url);
+        } else {
+            notSupportedurls.add(url);
+            //  System.out.println("Website is not supported");
+            notSupportedBox.appendText(url + "\n");
+            productPage = null;
+        }
+        return productPage;
+    }
 
-    private void checkproductPage(Website productPage) {
+    private void checkproductPage(String url) {
+
+        Website productPage = detectWebsite(url);
+
         if (productPage == null) {
             return;
         }
@@ -317,14 +385,21 @@ public class Controller {
         }
     }
 
+    //Clear entire UI
     public void clearUI() {
+        clearResultBoxes();
+        outputUrlsBox.clear();
+        searchBox.clear();
+        inputUrlsBox.clear();
+    }
+
+    //Clear result boxes
+    private void clearResultBoxes() {
         removedItemsBox.clear();
         oosItemsBox.clear();
         lowItemsBox.clear();
         notSupportedBox.clear();
-        outputUrlsBox.clear();
-        searchBox.clear();
-        inputUrlsBox.clear();
+
     }
 
     public void checkEmptyInput() {

@@ -80,6 +80,15 @@
             </graphic>
         </Button>
 
+        <!--Check Button-->
+        <Button fx:id="checkBack" text="Back In?" onAction="#checkifbackinStock" prefWidth="100">
+            <graphic>
+                <ImageView>
+                    <Image url="@/toolbarButtonGraphics/general/Find24.gif"/>
+                </ImageView>
+            </graphic>
+        </Button>
+
         <!--ClearAll Button-->
         <Button fx:id="clearButton" text="Clear All" onAction="#clearUI" prefWidth="100">
             <graphic>
@@ -112,7 +121,7 @@
     <Label text="Removed" GridPane.ColumnIndex="1" GridPane.rowIndex="3"/>
     <Label text="Out Of Stock" GridPane.ColumnIndex="2" GridPane.rowIndex="3"/>
     <Label text="Few Left" GridPane.ColumnIndex="3" GridPane.rowIndex="3"/>
-    <Label text="Not Supported" GridPane.ColumnIndex="4" GridPane.rowIndex="3"/>
+    <Label text="Not Supported/Back In Stock" GridPane.ColumnIndex="4" GridPane.rowIndex="3"/>
 
     <!--Result Box-->
     <TextArea fx:id="removedItemsBox" GridPane.ColumnIndex="1" GridPane.rowIndex="4" editable="false"/>
