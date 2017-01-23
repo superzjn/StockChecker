@@ -42,7 +42,7 @@ public class Controller {
     private ProgressBar progressBar;
 
     private MySQLConnector sqlConnector;
-    private String sql = null;
+    private static final String sqlreturnAll = "SELECT * FROM watchlist";
 
     private ArrayList<String> removedProducts = new ArrayList<>();
     private ArrayList<String> lowProducts = new ArrayList<>();
@@ -61,12 +61,11 @@ public class Controller {
 
         outputUrlsBox.clear();
         sqlConnector = new MySQLConnector();
-        sql = "SELECT * FROM watchlist";
         ResultSet resultSet;
         int count = 0;
 
         try {
-            resultSet = sqlConnector.query(sql);
+            resultSet = sqlConnector.query(sqlreturnAll);
 
             while (resultSet.next()) {
                 outputUrlsBox.appendText(resultSet.getString(1) + "\n");
@@ -98,7 +97,7 @@ public class Controller {
             for (String str : urls) {
 
                 str = str.trim();    //Remove spaces
-                sql = "INSERT INTO watchlist VALUES('" + str + "',now());";
+                String sql = "INSERT INTO watchlist VALUES('" + str + "',now());";
 
                 if (sqlConnector.update(sql) == 1) {
                     msgBox.setText(count + " urls are added.");
@@ -127,7 +126,7 @@ public class Controller {
             for (String str : urls) {
 
                 str = str.trim();    //Remove spaces
-                sql = "DELETE FROM watchlist WHERE Urls = '" + str + "';";
+                String sql = "DELETE FROM watchlist WHERE Urls = '" + str + "';";
 
                 if (sqlConnector.update(sql) == 1) {
                     msgBox.setText(count + " urls are deleted.");
@@ -147,30 +146,23 @@ public class Controller {
         ArrayList<String> backinstockItems = new ArrayList<>();
 
         sqlConnector = new MySQLConnector();
-        sql = "SELECT * FROM watchlist";
-        //ResultSet resultSet;
+        ResultSet resultSet = sqlConnector.query(sqlreturnAll);
+        int count = geturlCount();
 
         Task task = new Task<Void>() {    //Backend Thread
             @Override
             public Void call() {
 
                 float progress = 0;
-                int count;
 
                 try {
-                    ResultSet resultSet = sqlConnector.query(sql);
-                    ResultSet rowCount = sqlConnector.query("select COUNT(*) from watchlist");
-                    rowCount.next();   // Basically you are positioning the cursor before the first row and then requesting data. You need to move the cursor to the first row.
-                    count = rowCount.getInt(1);
-
                     while (resultSet.next()) {
                         String url = resultSet.getString(1);
                         Website productPage = detectWebsite(url);
                         if (productPage.pagenotFound()) {   // If it returns 404
                             removedProducts.add(productPage.getUrl());
                             removedItemsBox.appendText(productPage.getUrl() + "\n");
-                        }
-                        else if (!productPage.isoutofStock() && productPage !=null) {
+                        } else if (!productPage.isoutofStock()) {
                             backinstockItems.add(productPage.getUrl());
                             notSupportedBox.appendText(productPage.getUrl() + "\n");  // Add backin Stock item to "Not supported websites" box
                         }
@@ -189,13 +181,17 @@ public class Controller {
                         updateProgress(progress, count);
                     }
 
-                    sqlConnector.close();
-                    resultSet.close();
 
-                } catch (SQLException e)
-
-                {
+                } catch (SQLException e) {
                     e.printStackTrace();
+                } finally {
+                    try {
+                        resultSet.close();
+                    } catch (SQLException e) {
+                        System.out.println("In finally block");
+                        e.printStackTrace();
+                    }
+                    sqlConnector.close();
                 }
                 return null;
             }
@@ -210,7 +206,6 @@ public class Controller {
                 start();
     }
 
-
     public void checkStock() {
 
         clearResultBoxes();
@@ -221,24 +216,15 @@ public class Controller {
         notSupportedurls.clear();
 
         sqlConnector = new MySQLConnector();
-        sql = "SELECT * FROM watchlist";
-        //ResultSet resultSet;
+        ResultSet resultSet = sqlConnector.query(sqlreturnAll);
+        int count = geturlCount();
 
         Task task = new Task<Void>() {    //Backend Thread
             @Override
             public Void call() {
 
                 float progress = 0;
-                int count;
-
                 try {
-                    ResultSet resultSet = sqlConnector.query(sql);
-                    ResultSet rowCount = sqlConnector.query("select COUNT(*) from watchlist");
-                    rowCount.next();   // Basically you are positioning the cursor before the first row and then requesting data. You need to move the cursor to the first row.
-                    count = rowCount.getInt(1);
-
-                    // System.out.println("Count is " + count);
-
                     while (resultSet.next()) {
                         String url = resultSet.getString(1);
                         checkproductPage(url);
@@ -256,13 +242,17 @@ public class Controller {
                         updateProgress(progress, count);
                     }
 
-                    sqlConnector.close();
-                    resultSet.close();
-
-                } catch (SQLException e)
-
-                {
+                } catch (SQLException e) {
                     e.printStackTrace();
+                } finally {
+                    try {
+                        resultSet.close();
+                        sqlConnector.close();
+                    } catch (SQLException e) {
+                        System.out.println("In finally block");
+                        e.printStackTrace();
+                    }
+
                 }
                 return null;
             }
@@ -278,6 +268,30 @@ public class Controller {
                 start();
 
     }
+
+    private int geturlCount() {
+        sqlConnector = new MySQLConnector();
+        int count = 0;
+
+        ResultSet resultSet = sqlConnector.query("select COUNT(*) from watchlist");
+
+        try {
+            resultSet.next();
+            count = resultSet.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                System.out.println("Exception in final block");
+                e.printStackTrace();
+            }
+            sqlConnector.close();
+        }
+        return count;
+    }
+
 
     private Website detectWebsite(String url) {
         Website productPage;
@@ -331,7 +345,6 @@ public class Controller {
         if (productPage.isoutofStock()) {
             oosProducts.add(productPage.getUrl());
             oosItemsBox.appendText(productPage.getUrl() + "\n");
-            return;
         }
     }
 
@@ -353,7 +366,7 @@ public class Controller {
             input = input.trim();
 
             outputUrlsBox.clear();
-            sql = "SELECT * FROM watchlist WHERE Urls ='" + input + "'";
+            String sql = "SELECT * FROM watchlist WHERE Urls ='" + input + "'";
             resultSet = sqlConnector.query(sql);
 
             try {
@@ -367,6 +380,12 @@ public class Controller {
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    System.out.println("In finally block");
+                    e.printStackTrace();
+                }
                 sqlConnector.close();
             }
 
@@ -378,7 +397,7 @@ public class Controller {
 
     public void cleanDB() {
         sqlConnector = new MySQLConnector();
-        sql = "DELETE FROM  watchlist";
+        String sql = "DELETE FROM  watchlist";
 
         if (sqlConnector.update(sql) == 1) {
             msgBox.setText("All Records cleared.");
