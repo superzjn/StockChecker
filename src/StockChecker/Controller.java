@@ -17,8 +17,6 @@ public class Controller {
     @FXML
     private Button addButton;
     @FXML
-    private Button cleandbButton;
-    @FXML
     private Button deleteButton;
     @FXML
     private TextArea inputUrlsBox;
@@ -48,6 +46,8 @@ public class Controller {
     private ArrayList<String> lowProducts = new ArrayList<>();
     private ArrayList<String> oosProducts = new ArrayList<>();
     private ArrayList<String> notSupportedurls = new ArrayList<>();
+    private ArrayList<String> backinstockItems = new ArrayList<>();
+
 
     @FXML
     public void initialize() {
@@ -143,7 +143,6 @@ public class Controller {
     //Check if the item back in stock
     public void checkifbackinStock() {
 
-        ArrayList<String> backinstockItems = new ArrayList<>();
 
         sqlConnector = new MySQLConnector();
         ResultSet resultSet = sqlConnector.query(sqlreturnAll);
@@ -347,14 +346,6 @@ public class Controller {
             oosItemsBox.appendText(productPage.getUrl() + "\n");
         }
     }
-
-    private void showcheckResults(ArrayList<String> list) {
-
-        for (String url : list) {
-            outputUrlsBox.appendText(url + "\n");
-        }
-    }
-
 
     public void searchUrl() {
 

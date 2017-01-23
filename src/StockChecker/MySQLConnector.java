@@ -32,7 +32,7 @@ class MySQLConnector {
             preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS watchlist (Urls VARCHAR(850), AddDate TIMESTAMP, PRIMARY KEY (Urls));");
             preparedStatement.execute();
 
-        } catch (Exception e) {
+        } catch (SQLException | ClassNotFoundException e) {
             System.out.println("Failed to Establish Databse Connection");
             e.printStackTrace();
         }
@@ -64,7 +64,7 @@ class MySQLConnector {
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("Query Execution Failed");
             e.printStackTrace();
         }
@@ -79,7 +79,7 @@ class MySQLConnector {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
             flag = 1;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("Update Execution Failed");
             e.printStackTrace();
             if (e.toString().contains("Duplicate")) {

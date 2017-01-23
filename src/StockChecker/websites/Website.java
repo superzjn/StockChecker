@@ -51,7 +51,7 @@ public abstract class Website {
             try {
                 System.out.println("Trying again :" + url);
                 doc = this.httpConn.get();
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 ex.getStackTrace();
             }
             //  System.out.println("Time out, throwing exception");
@@ -64,7 +64,7 @@ public abstract class Website {
 
 
     String parseDoc() throws Exception {   //Get webpage content
-        try {
+
 //            System.setProperty("webdriver.ie.driver", "resources/selenium/webdriver/IEDriverServer.exe");
 //            WebDriver dr = new InternetExplorerDriver();
 
@@ -72,31 +72,21 @@ public abstract class Website {
 //            FirefoxProfile profile = new FirefoxProfile();
 //            WebDriver dr = new FirefoxDriver();
 
-            System.setProperty("webdriver.chrome.driver", "resources/selenium/webdriver/chromedriver.exe");
-            WebDriver dr = new ChromeDriver();
+        System.setProperty("webdriver.chrome.driver", "resources/selenium/webdriver/chromedriver.exe");
+        WebDriver dr = new ChromeDriver();
 
-            dr.get(url);
-            html = dr.getPageSource();
-            dr.close();
-            dr.quit();   // end the process
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        dr.get(url);
+        html = dr.getPageSource();
+        dr.close();
+        dr.quit();   // end the process
+
         return html;
-    }
-
-
-    public void setDoc(Document doc) {
-        this.doc = doc;
     }
 
     public Connection getHttpConn() {
         return httpConn;
     }
 
-    public void setHttpConn(Connection httpConn) {
-        this.httpConn = httpConn;
-    }
 
     public String getUrl() {
         return url;
@@ -120,7 +110,6 @@ public abstract class Website {
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
-
 
     public String getOosMessage() {
         return oosMessage;
