@@ -61,11 +61,9 @@ public class Controller {
 
         outputUrlsBox.clear();
         sqlConnector = new MySQLConnector();
-        ResultSet resultSet;
         int count = 0;
 
-        try {
-            resultSet = sqlConnector.query(sqlreturnAll);
+        try (ResultSet resultSet = sqlConnector.query(sqlreturnAll)) {
 
             while (resultSet.next()) {
                 outputUrlsBox.appendText(resultSet.getString(1) + "\n");
@@ -75,7 +73,7 @@ public class Controller {
             count = resultSet.getRow();
 
             sqlConnector.close();
-            resultSet.close();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -143,18 +141,15 @@ public class Controller {
     //Check if the item back in stock
     public void checkifbackinStock() {
 
-
-        sqlConnector = new MySQLConnector();
-        ResultSet resultSet = sqlConnector.query(sqlreturnAll);
         int count = geturlCount();
 
         Task task = new Task<Void>() {    //Backend Thread
             @Override
             public Void call() {
-
+                sqlConnector = new MySQLConnector();
                 float progress = 0;
 
-                try {
+                try (ResultSet resultSet = sqlConnector.query(sqlreturnAll)) {   // try with resource block will automatically close resultset
                     while (resultSet.next()) {
                         String url = resultSet.getString(1);
                         Website productPage = detectWebsite(url);
@@ -179,19 +174,11 @@ public class Controller {
                         });
                         updateProgress(progress, count);
                     }
-
-
                 } catch (SQLException e) {
                     e.printStackTrace();
-                } finally {
-                    try {
-                        resultSet.close();
-                    } catch (SQLException e) {
-                        System.out.println("In finally block");
-                        e.printStackTrace();
-                    }
-                    sqlConnector.close();
                 }
+                sqlConnector.close();
+
                 return null;
             }
         };
@@ -214,16 +201,15 @@ public class Controller {
         lowProducts.clear();
         notSupportedurls.clear();
 
-        sqlConnector = new MySQLConnector();
-        ResultSet resultSet = sqlConnector.query(sqlreturnAll);
         int count = geturlCount();
 
         Task task = new Task<Void>() {    //Backend Thread
             @Override
             public Void call() {
+                sqlConnector = new MySQLConnector();
 
                 float progress = 0;
-                try {
+                try (ResultSet resultSet = sqlConnector.query(sqlreturnAll)) {
                     while (resultSet.next()) {
                         String url = resultSet.getString(1);
                         checkproductPage(url);
@@ -243,51 +229,29 @@ public class Controller {
 
                 } catch (SQLException e) {
                     e.printStackTrace();
-                } finally {
-                    try {
-                        resultSet.close();
-                        sqlConnector.close();
-                    } catch (SQLException e) {
-                        System.out.println("In finally block");
-                        e.printStackTrace();
-                    }
-
                 }
+                sqlConnector.close();
                 return null;
+
             }
         };
 
         progressBar.progressProperty().
-
                 bind(task.progressProperty());
-        new
-
-                Thread(task).
-
-                start();
-
+        new Thread(task).start();
     }
 
     private int geturlCount() {
         sqlConnector = new MySQLConnector();
         int count = 0;
 
-        ResultSet resultSet = sqlConnector.query("select COUNT(*) from watchlist");
-
-        try {
+        try (ResultSet resultSet = sqlConnector.query("select COUNT(*) from watchlist")) {
             resultSet.next();
             count = resultSet.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                System.out.println("Exception in final block");
-                e.printStackTrace();
-            }
-            sqlConnector.close();
         }
+        sqlConnector.close();
         return count;
     }
 
@@ -351,16 +315,14 @@ public class Controller {
 
         sqlConnector = new MySQLConnector();
         String input = searchBox.getText();
-        ResultSet resultSet;
 
         if (!input.isEmpty()) {
             input = input.trim();
 
             outputUrlsBox.clear();
             String sql = "SELECT * FROM watchlist WHERE Urls ='" + input + "'";
-            resultSet = sqlConnector.query(sql);
 
-            try {
+            try (ResultSet resultSet = sqlConnector.query(sql)) {
                 if (resultSet.next()) {
                     outputUrlsBox.setText("It's there");
                 } else {
@@ -370,16 +332,8 @@ public class Controller {
 
             } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    System.out.println("In finally block");
-                    e.printStackTrace();
-                }
-                sqlConnector.close();
             }
-
+            sqlConnector.close();
         } else {
             msgBox.setText("Please Input");
         }
