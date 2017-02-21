@@ -49,7 +49,6 @@ public class Controller {
     private ArrayList<String> backinstockItems = new ArrayList<>();
 
 
-    @FXML
     public void initialize() {
         addButton.setDisable(true);
         deleteButton.setDisable(true);

@@ -1,13 +1,13 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="StockChecker:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/StockChecker_jar</output-path>
+  <artifact type="jar" name="StockChecker">
+    <output-path>$PROJECT_DIR$/out/artifacts/StockChecker</output-path>
     <root id="archive" name="StockChecker.jar">
       <element id="module-output" name="StockChecker" />
-      <element id="file-copy" path="$PROJECT_DIR$/resources/jlfgr-1_0.jar" />
       <element id="file-copy" path="$PROJECT_DIR$/resources/selenium/client-combined-3.0.1-nodeps.jar" />
       <element id="file-copy" path="$PROJECT_DIR$/resources/selenium/selenium-server-standalone-3.0.1.jar" />
-      <element id="file-copy" path="$PROJECT_DIR$/resources/mysql-connector-java-5.1.40-bin.jar" />
       <element id="file-copy" path="$PROJECT_DIR$/resources/jsoup-1.10.2.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/resources/mysql-connector-java-5.1.40-bin.jar" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/resources/jlfgr-1_0.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

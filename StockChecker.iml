@@ -27,5 +27,6 @@
         <jarDirectory url="file://$MODULE_DIR$/resources/selenium" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="resources" level="project" />
   </component>
 </module>
