@@ -257,6 +257,10 @@ public class Controller {
 
     private Website detectWebsite(String url) {
         Website productPage;
+        if (!(url.contains("http") || url.contains("https"))) {
+            url = "http://" + url;
+        }
+
         if (url.contains("redsgear")) {
             productPage = new Redsgear(url);
         } else if (url.contains("bedinabag")) {
