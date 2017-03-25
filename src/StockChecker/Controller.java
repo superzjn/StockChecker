@@ -40,7 +40,7 @@ public class Controller {
     private ProgressBar progressBar;
 
     private MySQLConnector sqlConnector;
-    private static final String sqlreturnAll = "SELECT * FROM watchlist order by AddDate";
+    private static final String sqlreturnAll = "SELECT * FROM watchlist order by id";
 
     private ArrayList<String> removedProducts = new ArrayList<>();
     private ArrayList<String> lowProducts = new ArrayList<>();
@@ -65,7 +65,7 @@ public class Controller {
         try (ResultSet resultSet = sqlConnector.query(sqlreturnAll)) {
 
             while (resultSet.next()) {
-                outputUrlsBox.appendText(resultSet.getString(1) + "\n");
+                outputUrlsBox.appendText(resultSet.getString(2) + "\n");
             }
             // Get count
             resultSet.last();
@@ -94,7 +94,7 @@ public class Controller {
             for (String str : urls) {
 
                 str = str.trim();    //Remove spaces
-                String sql = "INSERT INTO watchlist VALUES('" + str + "',now());";
+                String sql = "INSERT INTO watchlist (Urls,AddDate) VALUES('" + str + "',now());";
 
                 if (sqlConnector.update(sql) == 1) {
                     msgBox.setText(count + " urls are added.");

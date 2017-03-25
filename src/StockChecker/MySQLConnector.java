@@ -29,7 +29,7 @@ class MySQLConnector {
             preparedStatement = connection.prepareStatement("USE stockchecker;");
             preparedStatement.execute();
 
-            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS watchlist (Urls VARCHAR(850), AddDate TIMESTAMP, PRIMARY KEY (Urls));");
+            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS watchlist (id INT NOT NULL primary key AUTO_INCREMENT,Urls VARCHAR(850) NOT NULL, AddDate TIMESTAMP);");
             preparedStatement.execute();
 
         } catch (SQLException | ClassNotFoundException e) {
