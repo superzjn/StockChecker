@@ -40,7 +40,7 @@ public class Controller {
     private ProgressBar progressBar;
 
     private MySQLConnector sqlConnector;
-    private static final String sqlreturnAll = "SELECT * FROM watchlist";
+    private static final String sqlreturnAll = "SELECT * FROM watchlist order by AddDate";
 
     private ArrayList<String> removedProducts = new ArrayList<>();
     private ArrayList<String> lowProducts = new ArrayList<>();
