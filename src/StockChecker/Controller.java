@@ -150,7 +150,7 @@ public class Controller {
 
                 try (ResultSet resultSet = sqlConnector.query(sqlreturnAll)) {   // try with resource block will automatically close resultset
                     while (resultSet.next()) {
-                        String url = resultSet.getString(1);
+                        String url = resultSet.getString(2);
                         Website productPage = detectWebsite(url);
                         if (productPage.pagenotFound()) {   // If it returns 404
                             removedProducts.add(productPage.getUrl());
@@ -210,7 +210,7 @@ public class Controller {
                 float progress = 0;
                 try (ResultSet resultSet = sqlConnector.query(sqlreturnAll)) {
                     while (resultSet.next()) {
-                        String url = resultSet.getString(1);
+                        String url = resultSet.getString(2);
                         checkproductPage(url);
                         progress++;
                         float percent = (100 * progress) / (float) count;
